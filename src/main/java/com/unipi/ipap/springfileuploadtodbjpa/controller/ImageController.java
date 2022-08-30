@@ -19,6 +19,10 @@ public class ImageController {
         this.storageService = storageService;
     }
 
+    /**
+     * Store images in database.
+     * More secure access and less frequently used images
+     */
     @PostMapping
     public ResponseEntity<Boolean> uploadImage(@RequestParam("image")MultipartFile file) throws IOException {
         return ResponseEntity
@@ -26,6 +30,9 @@ public class ImageController {
                 .body(storageService.uploadImage(file));
     }
 
+    /**
+     * Retrieve images from database
+     */
     @GetMapping("/{fileName}")
     public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
         return ResponseEntity
@@ -34,4 +41,25 @@ public class ImageController {
                 .body(storageService.downloadImage(fileName));
     }
 
+    /**
+     * Store images in filesystem
+     * faster access where images are used frequently
+     */
+    @PostMapping("/filesystem")
+    public ResponseEntity<Boolean> uploadImageToFileSystem(@RequestParam("image")MultipartFile file) throws IOException {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(storageService.uploadImageToFileSystem(file));
+    }
+
+    /**
+     * Retrieve images from database
+     */
+    @GetMapping("/filesystem/{fileName}")
+    public ResponseEntity<?> downloadImageFromFileSystem(@PathVariable String fileName) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.valueOf("image/png"))
+                .body(storageService.downloadImageFromFileSystem(fileName));
+    }
 }
